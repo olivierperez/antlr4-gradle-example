@@ -10,7 +10,7 @@ package net.davidesavazzi.mylanguage;
 
 chat : line+ EOF ;
 
-line : name command message NEWLINE ;
+line : name command message NEWLINE? ;
 
 name : WORD WHITESPACE ;
 

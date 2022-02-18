@@ -2,53 +2,51 @@ group 'net.davidesavazzi'
 version '1.0.0-SNAPSHOT'
 
 apply plugin: 'java'
+apply plugin: 'kotlin'
 apply plugin: 'antlr'
-apply plugin: 'maven-publish'
 
 sourceCompatibility = 1.8
+buildscript {
+    ext.kotlin_version = '1.6.10'
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+
+compileTestKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
 
 repositories {
     mavenLocal()
     mavenCentral()
 }
 
-/**
- * Without the next section Gradle will add a 'compile' dependency on Antlr3:
- * https://github.com/gradle/gradle/issues/820
- */
-configurations {
-    compile {
-        extendsFrom = extendsFrom.findAll { it != configurations.antlr }
-    }
-}
-
 dependencies {
-    antlr "org.antlr:antlr4:4.7.1"
-    compile "org.antlr:antlr4-runtime:4.7.1"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    implementation 'org.antlr:antlr4-runtime:4.9.3'
+    antlr 'org.antlr:antlr4:4.9.3'
 }
 
 generateGrammarSource {
     maxHeapSize = "64m"
+}
 
-    // Keep a copy of generated sources
-    doLast {
-        println "Copying generated grammar lexer/parser files to main directory."
-        copy {
-            from "${buildDir}/generated-src/antlr/main"
-            into "generated-src/main/java"
-        }
-    }
+tasks.getByName("compileKotlin") {
+    dependsOn "generateGrammarSource"
 }
 
 clean.doLast {
     file('generated-src').deleteDir()
-}
-
-// Publish to Maven Repository
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-        }
-    }
 }
