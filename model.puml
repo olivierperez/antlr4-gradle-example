@@ -1,0 +1,28 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class Module
+
+class File {
+    + path: String
+}
+
+class Class {
+    + name: String
+}
+
+class Usage {
+    + caller: Class
+    + callee: Class
+    + file: File
+    + line: Int
+}
+
+
+Module *-- File
+File *-- Class
+Class -> Usage
+Usage -> Class
+File <-- Usage
+
+@enduml

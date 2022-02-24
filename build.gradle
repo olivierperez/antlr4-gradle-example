@@ -33,6 +33,11 @@ repositories {
     mavenCentral()
 }
 
+//sourceSets.main.java.srcDirs += "${buildDir}/generated-src/antlr/main"
+//sourceSets.main.java.srcDirs += "src/main/gen"
+//sourceSets.main.kotlin.srcDirs += "${buildDir}/generated-src/antlr/main"
+//sourceSets.main.kotlin.srcDirs += "src/main/gen"
+
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     implementation 'org.antlr:antlr4-runtime:4.9.3'
@@ -41,6 +46,8 @@ dependencies {
 
 generateGrammarSource {
     maxHeapSize = "64m"
+    arguments += ["-visitor", "-long-messages", "-package", "fr.o80.kotlin"]
+    arguments << "-lib" << "src/main/antlr/fr/o80/kotlin"
 }
 
 tasks.getByName("compileKotlin") {
